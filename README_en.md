@@ -25,3 +25,5 @@ python monitor.py                    # Dashboard → http://localhost:8888
 | `SOLUSDT_Trading_Strategy_en.md` | Full strategy spec |
 | `strategy_explained_en.md` | Beginner-friendly strategy walkthrough |
 | `project_summary_en.md` | Project results summary |
+| `setup_guide_en.md` | Setup guide for beginners |
+| `配置说明_zh.md` | Chinese setup guide |

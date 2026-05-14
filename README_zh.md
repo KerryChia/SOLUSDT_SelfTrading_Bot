@@ -28,3 +28,5 @@ python monitor.py                     # 仪表盘 → http://localhost:8888
 | `strategy_explained_en.md` | Plain-English walkthrough |
 | `项目成果说明_zh.md` | 项目成果总结 (中文) |
 | `project_summary_en.md` | Project summary (English) |
+| `配置说明_zh.md` | 从零开始配置指南 (中文) |
+| `setup_guide_en.md` | Setup guide for beginners (English) |

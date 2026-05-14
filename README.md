@@ -20,6 +20,7 @@ python monitor.py                    # Dashboard → http://localhost:8888
 | [Project Summary](project_summary_en.md) / [项目成果说明](项目成果说明_zh.md) | EN / ZH |
 | [Strategy Details](SOLUSDT_Trading_Strategy_en.md) / [策略文档](SOLUSDT_Trading_Strategy_zh.md) | EN / ZH |
 | [Strategy Explained (Plain)](strategy_explained_en.md) / [策略白话版](策略说明-白话版_zh.md) | EN / ZH |
+| [Setup Guide](setup_guide_en.md) / [配置说明](配置说明_zh.md) | EN / ZH |
 
 ## Strategy at a Glance
 
