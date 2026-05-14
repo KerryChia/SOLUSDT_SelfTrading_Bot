@@ -36,7 +36,7 @@ and strict dynamic risk controls.
   - 10-second auto-refresh, Chart.js visualization
 
 [3. Documentation]
-  - SOLUSDT_Trading_Strategy_en.txt: complete strategy spec
+  - SOLUSDT_Trading_Strategy_en.md: complete strategy spec
   - strategy_explained_en.md: beginner-friendly explanation
 
 
@@ -79,12 +79,12 @@ and strict dynamic risk controls.
   ├── MainProgramme.py               # Trading bot
   ├── monitor.py                      # Dashboard
   ├── config.example.json             # Config template
-  ├── SOLUSDT_Trading_Strategy_en.txt # Strategy spec (EN)
-  ├── SOLUSDT_Trading_Strategy_zh.txt # Strategy spec (ZH)
+  ├── SOLUSDT_Trading_Strategy_en.md # Strategy spec (EN)
+  ├── SOLUSDT_Trading_Strategy_zh.md # Strategy spec (ZH)
   ├── strategy_explained_en.md        # Plain-English explanation
   ├── 策略说明-白话版_zh.md             # Chinese beginner explanation
-  ├── project_summary_en.txt          # This file (EN)
-  ├── 项目成果说明_zh.txt              # Project summary (ZH)
+  ├── project_summary_en.md          # This file (EN)
+  ├── 项目成果说明_zh.md              # Project summary (ZH)
   ├── README.md                       # Main README
   ├── README_en.md                    # English README
   ├── README_zh.md                    # Chinese README

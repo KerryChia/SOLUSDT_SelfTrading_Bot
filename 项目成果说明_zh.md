@@ -35,7 +35,7 @@
   - 10秒自动刷新，Chart.js 可视化
 
 【3. 策略文档】
-  - SOLUSDT_Trading_Strategy.txt：完整策略参数和规则
+  - SOLUSDT_Trading_Strategy.md：完整策略参数和规则
   - 策略说明-白话版.md：新手友好的策略解释
 
 
@@ -78,12 +78,12 @@
   ├── MainProgramme.py                      # 交易机器人
   ├── monitor.py                            # 监控仪表盘
   ├── config.example.json                   # 配置模板
-  ├── SOLUSDT_Trading_Strategy_zh.txt       # 策略文档 (中文)
-  ├── SOLUSDT_Trading_Strategy_en.txt       # Strategy spec (EN)
+  ├── SOLUSDT_Trading_Strategy_zh.md       # 策略文档 (中文)
+  ├── SOLUSDT_Trading_Strategy_en.md       # Strategy spec (EN)
   ├── 策略说明-白话版_zh.md                  # 白话解释 (中文)
   ├── strategy_explained_en.md              # Plain-English (EN)
-  ├── 项目成果说明_zh.txt                    # 本文件 (中文)
-  ├── project_summary_en.txt                # Project summary (EN)
+  ├── 项目成果说明_zh.md                    # 本文件 (中文)
+  ├── project_summary_en.md                # Project summary (EN)
   ├── README.md                             # GitHub 首页 (双语)
   ├── README_zh.md                          # Chinese README
   ├── README_en.md                          # English README

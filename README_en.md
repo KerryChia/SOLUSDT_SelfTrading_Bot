@@ -22,6 +22,6 @@ python monitor.py                    # Dashboard → http://localhost:8888
 | `MainProgramme.py` | Trading bot |
 | `monitor.py` | Asset monitoring dashboard |
 | `config.example.json` | Configuration template |
-| `SOLUSDT_Trading_Strategy_en.txt` | Full strategy spec |
+| `SOLUSDT_Trading_Strategy_en.md` | Full strategy spec |
 | `strategy_explained_en.md` | Beginner-friendly strategy walkthrough |
-| `project_summary_en.txt` | Project results summary |
+| `project_summary_en.md` | Project results summary |

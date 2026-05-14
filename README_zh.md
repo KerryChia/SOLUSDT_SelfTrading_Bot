@@ -22,9 +22,9 @@ python monitor.py                     # 仪表盘 → http://localhost:8888
 | `MainProgramme.py` | 交易机器人 |
 | `monitor.py` | 监控仪表盘 |
 | `config.example.json` | 配置模板 |
-| `SOLUSDT_Trading_Strategy_zh.txt` | 完整策略文档 (中文) |
-| `SOLUSDT_Trading_Strategy_en.txt` | Strategy spec (English) |
+| `SOLUSDT_Trading_Strategy_zh.md` | 完整策略文档 (中文) |
+| `SOLUSDT_Trading_Strategy_en.md` | Strategy spec (English) |
 | `策略说明-白话版_zh.md` | 新手友好版解释 (中文) |
 | `strategy_explained_en.md` | Plain-English walkthrough |
-| `项目成果说明_zh.txt` | 项目成果总结 (中文) |
-| `project_summary_en.txt` | Project summary (English) |
+| `项目成果说明_zh.md` | 项目成果总结 (中文) |
+| `project_summary_en.md` | Project summary (English) |
