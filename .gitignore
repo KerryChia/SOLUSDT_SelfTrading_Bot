@@ -1,0 +1,12 @@
+# 敏感信息
+config.json
+
+# 运行时生成
+history.json
+trades.json
+position.json
+*.log
+
+# Python
+__pycache__/
+*.pyc

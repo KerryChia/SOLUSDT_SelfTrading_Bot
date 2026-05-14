@@ -1,0 +1,8 @@
+{
+    "api_key": "你的币安API_KEY",
+    "secret": "你的币安SECRET_KEY",
+    "testnet": false,
+    "proxy": "http://127.0.0.1:7890",
+    "usd_cny_rate": 7.25,
+    "initial_equity": 30
+}
