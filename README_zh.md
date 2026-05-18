@@ -7,9 +7,12 @@
 ```bash
 pip install ccxt numpy requests
 cp config.example.json config.json   # 编辑填入API密钥
+python launcher.py --debug           # 控制面板 + 两个调试终端
 python MainProgramme.py                           # 启动交易
 python monitor.py                     # 仪表盘 → http://localhost:8888
 ```
+
+Windows 下也可以直接双击 `启动.bat` 打开 debug 启动器。
 
 ## 策略
 
@@ -21,6 +24,8 @@ python monitor.py                     # 仪表盘 → http://localhost:8888
 |------|------|
 | `MainProgramme.py` | 交易机器人 |
 | `monitor.py` | 监控仪表盘 |
+| `launcher.py` | 启动控制面板，可控制 bot 和 monitor |
+| `启动.bat` | Windows 双击启动，默认进入 debug 终端模式 |
 | `config.example.json` | 配置模板 |
 | `SOLUSDT_Trading_Strategy_zh.md` | 完整策略文档 (中文) |
 | `SOLUSDT_Trading_Strategy_en.md` | Strategy spec (English) |

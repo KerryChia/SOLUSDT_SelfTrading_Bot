@@ -9,9 +9,12 @@ Binance margin-based SOL/USDT automated trading system. Long/short scalping stra
 ```bash
 pip install ccxt numpy requests
 cp config.example.json config.json   # Edit with your API keys
+python launcher.py --debug           # Control panel + two debug terminals
 python MainProgramme.py              # Start trading
 python monitor.py                    # Dashboard → http://localhost:8888
 ```
+
+On Windows, you can also double-click `启动.bat` to open the debug launcher.
 
 ## Docs
 

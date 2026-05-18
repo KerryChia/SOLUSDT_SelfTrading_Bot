@@ -13,7 +13,30 @@ import requests
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("Monitor")
 
-PORT = 8888
+def resolve_port(default: int = 8888) -> int:
+    env_port = os.environ.get("SOLUSDT_MONITOR_PORT")
+    if env_port:
+        try:
+            return int(env_port)
+        except ValueError:
+            pass
+
+    args = sys.argv[1:]
+    for i, arg in enumerate(args):
+        if arg == "--port" and i + 1 < len(args):
+            try:
+                return int(args[i + 1])
+            except ValueError:
+                pass
+        if arg.startswith("--port="):
+            try:
+                return int(arg.split("=", 1)[1])
+            except ValueError:
+                pass
+    return default
+
+
+PORT = resolve_port()
 SYMBOL = "SOL/USDT"
 META_KEYS = {"info", "free", "used", "total", "timestamp", "datetime",
              "debt", "borrowed", "interest", "net", "currency", "free_margin",
