@@ -3,6 +3,25 @@
     "secret": "你的币安SECRET_KEY",
     "testnet": false,
     "proxy": "http://127.0.0.1:7890",
+    "cf_worker": "",
+    "deepseek_api_key": "你的DeepSeek_API_KEY",
+    "deepseek_enabled": true,
+    "deepseek_model": "deepseek-chat",
+    "dashboard_password": "",
+    "dashboard_admin_password": "",
     "usd_cny_rate": 7.25,
-    "initial_equity": 30
+    "initial_equity": 30,
+    "initial_equity_cny": 0,
+    "db_keep_days": 90,
+    "feature_flags": {
+        "signal_volume_filter": true,
+        "signal_ema_trend_filter": true,
+        "signal_bb_width_filter": true,
+        "signal_rsi_divergence": true,
+        "multi_timeframe_ai_context": true,
+        "multi_timeframe_filter": false,
+        "limit_ioc_orders": false,
+        "sqlite_storage": false,
+        "sqlite_read_enabled": false
+    }
 }

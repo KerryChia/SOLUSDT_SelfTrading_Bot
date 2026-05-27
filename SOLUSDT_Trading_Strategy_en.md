@@ -1,117 +1,127 @@
 ============================================================
-    SOLUSDT Aggressive Short-Term Trading Strategy
-    Snowball: $33 → $100 in 3 Weeks
+    SOLUSDT Aggressive Short-Term Trading Strategy v8.3
+    Bollinger Band Reversion + DeepSeek AI Dynamic Risk
 ============================================================
 
-Objective: Grow $33 to $100 within 3 weeks (~200% return)
-Style: High-frequency scalping + 3x leverage + bi-directional
-
+Objective: Short-term scalping on Binance margin account.
+Style: 5-min Bollinger band mean-reversion + 5x leverage + DeepSeek AI filter.
 
 1. Core Logic
 ------------------------------------------------------------
-Trade 5-minute candle swings: ride the trend, get in and out fast.
-Leverage amplifies each trade's return; compounding does the rest.
-Cut losses ruthlessly — small losses are better than bag-holding.
-
+Local strategy produces long/short candidate signals based on Bollinger
+band touches, RSI turns, EMA trend, volume spikes, and MACD momentum.
+DeepSeek AI then acts as a second-pass filter for entry approval, exit
+hold/reverse decisions, and periodic position review. Hard risk controls
+(-1.0% max loss, 120min negative force close) cannot be overridden by AI.
 
 2. Technical Indicators
 ------------------------------------------------------------
 | Indicator    | Parameters    | Purpose                     |
 |-------------|---------------|-----------------------------|
-| EMA         | 5, 13, 30     | Short-term trend (agile)    |
-| RSI         | 7             | Rapid overbought/oversold   |
+| EMA         | 5, 13, 30     | Short-term trend            |
+| RSI         | 7             | Overbought/oversold         |
 | MACD        | 8, 17, 9      | Fast momentum shifts        |
-| Bollinger   | 14, 2         | Short-term volatility bands |
-| ATR         | 7             | Short-term true range       |
+| Bollinger   | 14, 2.0       | Volatility bands            |
+| ATR         | 7             | True range                  |
 | Volume MA   | 10            | Volume spike confirmation   |
 
-Timeframe: 5-minute candles
+Timeframe: 5-min candles. MTF context: 15m + 1h (AI-only by default).
 
-
-3. Entry Conditions (the more the better)
+3. Entry Conditions (local signal quality gates)
 ------------------------------------------------------------
 
-[Long Entry]
-  1. EMA5 > EMA13 (short-term bullish)
-  2. RSI(7) recovering from oversold (<30) or in 40~55 range
-  3. MACD histogram turns positive (or golden cross)
-  4. Price bouncing near lower Bollinger Band
-  5. Volume > 10-period average
+[Long Candidate]
+  1. ATR >= 0.045% of price (market is active)
+  2. Low touches BB lower band (BB_lower * 1.003)
+  3. Current candle is bullish (close > open)
+  4. RSI rising, RSI <= 55
+  5. Volume >= VOL_MA * 1.5
+  6. EMA trend: EMA5 > EMA13 > EMA30
+  7. BB width >= 0.6%
+  8. RSI bullish divergence (bonus)
 
-  Minimum: Condition 1 + (2 or 3)
+[Short Candidate]
+  1. ATR >= 0.045% of price
+  2. High touches BB upper band (BB_upper * 0.997)
+  3. Current candle is bearish (close < open)
+  4. RSI falling, RSI >= 45
+  5. Volume >= VOL_MA * 1.5
+  6. EMA trend: EMA5 < EMA13 < EMA30
+  7. BB width >= 0.6%
+  8. RSI bearish divergence (bonus)
 
-[Short Entry]
-  1. EMA5 < EMA13 (short-term bearish)
-  2. RSI(7) dropping from overbought (>70) or in 45~60 range
-  3. MACD histogram turns negative (or death cross)
-  4. Price pulling back near upper Bollinger Band
-  5. Volume > 10-period average
+After 3 recent AI skips, thresholds are temporarily tightened (strict mode).
 
-  Minimum: Condition 1 + (2 or 3)
-
-
-4. Exit Conditions
+4. DeepSeek AI Layer
 ------------------------------------------------------------
 
-[Long Exit]
-  Stop-loss: -1.5% from entry, or -1.2x ATR(7), whichever is tighter
-  Take-profit: +3% (close entire position)
-  Trailing stop: activates after +2% profit, exits on 1.2% pullback
-  Reversal signal: EMA5 < EMA13 or RSI > 80
+[Entry AI]
+Receives: last 12 candles, indicators, account state, MTF context, recent results.
+Can: approve with cap_use 10%-70%, or skip.
+Cannot: reverse long↔short.
 
-[Short Exit]
-  Stop-loss: +1.5% from entry, or +1.2x ATR(7), whichever is tighter
-  Take-profit: +3% (close entire position)
-  Trailing stop: activates after +2% profit, exits on 1.2% pullback
-  Reversal signal: EMA5 > EMA13 or RSI < 20
+[Exit AI]
+Triggered by: soft exit conditions, 30-min review, dynamic threshold hits.
+Can: close, hold (with new TP/SL thresholds), or reverse position.
+Cannot: override -1.0% hard stop or 120min negative force close.
 
-[Time Stop]
-  If no SL/TP triggered within 2 hours → market close (free up capital)
+[AI Quality Gate]
+If AI-approved entries lose 5 times in a row → AI max cap_use limited to base 48%.
 
-
-5. Position Sizing
+5. Exit Conditions
 ------------------------------------------------------------
-  Leverage: 3x
-  Capital per trade: 70%-80% of net equity
-  Only 1 position at a time (all-in, no diversification)
+Hard exits (always enforced):
+  - Floating loss >= -1.0% → force close
+  - Negative for 120 min → force close
+  - Margin level below dynamic floor → force close
 
+Soft exits (AI-reviewed):
+  - Take-profit trigger: >= 1.5% (or ATR-dynamic up to 3.5%)
+  - Stop-loss trigger: <= -1.0% (or ATR-dynamic min 0.6%)
+  - Trailing stop: activates at 1.2%, pullback 0.45%
+  - Profit retrace protection
+  - MACD/RSI momentum weakening
+  - 30-min idle review
+  - AI plan threshold re-check every 30 min
 
-6. Risk Controls
+6. Position Sizing
 ------------------------------------------------------------
-  1. Max daily loss 12% → halt until next day
-  2. Max 8 trades per day
-  3. 4 consecutive losses → pause 1 hour
-  4. Every trade MUST have a stop-loss
-  5. No trading 0:00-6:00 Beijing time (low liquidity)
-  6. No trading 15 min around major news events
-  7. Margin usage < 80% (liquidation protection)
+  Leverage: 5x
+  Base capital use: 48% (AI can adjust 10% - 70%)
+  Target notional: equity * 5 * cap_use
+  Margin-level guard: usage<30%→150% floor, <70%→138%, else→130%
+  Only 1 position at a time.
 
-
-7. Compounding Path (Estimated)
+7. Risk Controls
 ------------------------------------------------------------
-  Start: $33, 3x leverage, 75% capital per trade
-  Target per win: +3% (SOL price move) → ~+6.75% account gain (leveraged)
-  Stop per loss: -1.5% → ~-3.4% account loss (leveraged)
+  1. Hard max loss per trade: -1.0% (AI cannot waive)
+  2. Negative position force close: 120 min
+  3. Max daily loss: 15% of start equity → halt
+  4. 5 consecutive losses → pause 30 min
+  5. Dynamic margin-level floor
+  6. AI consecutive approve loss cap (5 → limit to base cap_use)
+  7. SQLite dual-write persistence (JSON + SQLite)
+  8. Slippage tracking: signal price vs fill price
 
-  50% win rate, 4 trades/day:
-    Daily net ≈ 2 wins x $2.2 - 2 losses x $1.1 = $2.2
-    21 days ≈ $33 + $46 = $79
-
-  55% win rate:
-    Daily net ≈ 2.2 wins x $2.2 - 1.8 losses x $1.1 = $2.86
-    21 days ≈ $33 + $60 = $93
-
-  Realistic path: after 5-10 days capital reaches $50+,
-  position size increases, compounding accelerates.
-  Optimistic: 14-21 days to $100
-  Conservative: 21-30 days to $80-100
-
-
-8. Risk Warnings
+8. MTF Multi-Timeframe
 ------------------------------------------------------------
-  1. Aggressive short-term strategy; 3x leverage amplifies drawdowns
-  2. Win rate is critical — don't chase, wait for the signal
-  3. Stop-loss is the bottom line — never move it further away
-  4. Monitor margin level — >8% adverse move may trigger liquidation
-  5. $33 is small capital; consecutive losses can wipe it out quickly
-  6. High-frequency trading incurs significant fees; use BNB for discounts
+  15m and 1h trends computed from EMA30 + MACD histogram.
+  MTF context sent to DeepSeek by default.
+  MTF local filter (optional): bearish MTF rejects longs, bullish rejects shorts.
+  MTF neutral: base cap_use halved (48% → 24%).
+
+9. New in v8.3
+------------------------------------------------------------
+  - SQLite persistent storage (trades.db) with 5 tables
+  - JSON + SQLite dual-write, gradual migration
+  - Trade statistics & AI quality dashboards
+  - migrate_json_to_sqlite.py for legacy data import
+  - Feature flag system (config.py) for gradual rollout
+
+10. Risk Warnings
+------------------------------------------------------------
+  1. 5x leverage amplifies drawdowns significantly
+  2. DeepSeek AI is an assistant, not a guarantee — always use stop-losses
+  3. API keys should have trading permissions only; disable withdrawal
+  4. Mainland China users need a proxy or Cloudflare Worker relay
+  5. This is an aggressive short-term strategy; not investment advice

@@ -1,0 +1,4 @@
+ccxt
+numpy
+requests
+pytest

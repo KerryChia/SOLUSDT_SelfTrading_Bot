@@ -1,0 +1,589 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SOLUSDT 自动交易程序与策略说明 v8.3</title>
+  <style>
+    :root{
+      --bg:#f3f6fa;
+      --paper:#ffffff;
+      --ink:#14202b;
+      --muted:#637282;
+      --line:#dbe4ee;
+      --blue:#2563eb;
+      --teal:#009e8e;
+      --green:#16a36b;
+      --red:#e64c66;
+      --amber:#b7791f;
+      --violet:#7257c8;
+      --shadow:0 18px 46px rgba(20,32,43,.10);
+      --soft:0 8px 22px rgba(20,32,43,.07);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    img{max-width:100%;display:block}
+    body{
+      margin:0;
+      color:var(--ink);
+      background:linear-gradient(180deg,#f9fbfd 0%,var(--bg) 44%,#eef3f7 100%);
+      font-family:Inter,"Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+      line-height:1.72;
+      overflow-x:hidden;
+    }
+    a{color:inherit}
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:20;
+      background:rgba(249,251,253,.88);
+      backdrop-filter:blur(16px);
+      border-bottom:1px solid rgba(219,228,238,.85);
+    }
+    .nav{
+      width:min(1180px,calc(100% - 32px));
+      margin:auto;
+      min-height:64px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:20px;
+    }
+    .brand{display:flex;align-items:center;gap:10px;font-weight:950;min-width:0}
+    .brand span{white-space:nowrap}
+    .brand-avatar{
+      width:34px;
+      height:34px;
+      border-radius:50%;
+      object-fit:cover;
+      object-position:center 28%;
+      border:2px solid #fff;
+      box-shadow:0 8px 20px rgba(20,32,43,.18);
+    }
+    .links{display:flex;gap:16px;color:var(--muted);font-size:14px}
+    .links a{text-decoration:none;font-weight:850}
+    .links a:hover{color:var(--blue)}
+    .wrap{width:min(1180px,calc(100% - 32px));margin:auto;min-width:0}
+    .wrap > *,.hero > *,.grid > *,.flow > *,.monitor > *,.timeline > *,.version > *,.step > *{min-width:0}
+    .hero{
+      padding:74px 0 48px;
+      display:grid;
+      gap:30px;
+    }
+    .kicker{
+      display:inline-flex;
+      align-items:center;
+      gap:9px;
+      width:max-content;
+      max-width:100%;
+      padding:7px 12px;
+      border-radius:999px;
+      color:#075e56;
+      background:#e6f6f3;
+      border:1px solid #bde5dd;
+      font-size:13px;
+      font-weight:950;
+    }
+    .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 rgba(22,163,107,.5);animation:pulse 1.8s infinite}
+    @keyframes pulse{70%{box-shadow:0 0 0 12px rgba(22,163,107,0)}}
+    h1{
+      max-width:940px;
+      margin:18px 0 16px;
+      font-size:clamp(42px,7vw,84px);
+      line-height:.98;
+      letter-spacing:0;
+      overflow-wrap:anywhere;
+    }
+    .h1-line{display:inline}
+    .lead{
+      max-width:860px;
+      margin:0;
+      color:var(--muted);
+      font-size:18px;
+    }
+    .actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+    .btn{
+      min-height:46px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:0 18px;
+      border-radius:8px;
+      border:1px solid var(--line);
+      background:#fff;
+      text-decoration:none;
+      font-weight:950;
+      box-shadow:var(--soft);
+      transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+    .btn:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:#bccbda}
+    .btn.primary{background:var(--ink);color:#fff;border-color:var(--ink)}
+    .status-grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:12px;
+      margin-top:18px;
+    }
+    .metric{
+      background:var(--paper);
+      border:1px solid var(--line);
+      border-radius:8px;
+      padding:18px;
+      box-shadow:var(--soft);
+    }
+    .metric span{display:block;color:var(--muted);font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.08em}
+    .metric strong{display:block;margin-top:6px;font-size:30px;line-height:1.1}
+    .metric:nth-child(1) strong{color:var(--blue)}
+    .metric:nth-child(2) strong{color:var(--teal)}
+    .metric:nth-child(3) strong{color:var(--amber)}
+    .metric:nth-child(4) strong{color:var(--violet)}
+    section{padding:58px 0}
+    .section-head{max-width:800px;margin-bottom:24px}
+    .eyebrow{font-size:13px;font-weight:950;letter-spacing:.12em;text-transform:uppercase;color:var(--teal)}
+    h2{margin:8px 0 10px;font-size:clamp(28px,4vw,46px);line-height:1.1;letter-spacing:0}
+    h2,.lead,.section-head p,.card h3,.card p,.step h3,.step p,.version h3,.version li,.monitor-link strong{overflow-wrap:anywhere}
+    .section-head p{margin:0;color:var(--muted);font-size:17px}
+    .grid{display:grid;gap:14px}
+    .cols-2{grid-template-columns:repeat(2,1fr)}
+    .cols-3{grid-template-columns:repeat(3,1fr)}
+    .card{
+      position:relative;
+      background:rgba(255,255,255,.94);
+      border:1px solid var(--line);
+      border-radius:8px;
+      padding:22px;
+      box-shadow:var(--soft);
+      overflow:hidden;
+    }
+    .card:before{
+      content:"";
+      position:absolute;
+      inset:0 0 auto 0;
+      height:3px;
+      background:linear-gradient(90deg,var(--blue),var(--teal),var(--amber));
+    }
+    .card h3{margin:0 0 8px;font-size:19px}
+    .card p{margin:0;color:var(--muted)}
+    .card ul{margin:12px 0 0;padding:0;list-style:none;display:grid;gap:8px;color:var(--muted)}
+    .card li{display:flex;gap:9px}
+    .check{
+      width:21px;
+      height:21px;
+      flex:0 0 21px;
+      border-radius:6px;
+      background:#e8f7f2;
+      color:#087a55;
+      display:grid;
+      place-items:center;
+      font-weight:950;
+      line-height:1;
+    }
+    .flow{display:grid;gap:12px}
+    .step{
+      display:grid;
+      grid-template-columns:52px 1fr auto;
+      gap:14px;
+      align-items:center;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:8px;
+      padding:16px;
+      box-shadow:var(--soft);
+    }
+    .num{width:42px;height:42px;border-radius:8px;display:grid;place-items:center;background:#eaf1ff;color:var(--blue);font-weight:950}
+    .step h3{margin:0;font-size:18px}
+    .step p{margin:2px 0 0;color:var(--muted)}
+    .tag{font-size:12px;color:#fff;background:var(--ink);border-radius:999px;padding:5px 10px;font-weight:900;white-space:nowrap}
+    .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:8px;background:#fff;box-shadow:var(--soft)}
+    table{width:100%;border-collapse:collapse;min-width:720px}
+    th,td{padding:13px 14px;border-bottom:1px solid var(--line);text-align:left}
+    th{background:#f7fafc;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+    tr:last-child td{border-bottom:0}
+    code{background:#eef4f9;border:1px solid #dce7f0;border-radius:6px;padding:2px 6px}
+    .monitor{
+      display:grid;
+      grid-template-columns:.88fr 1.12fr;
+      gap:16px;
+    }
+    .monitor-link{
+      min-height:300px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      text-decoration:none;
+      color:#fff;
+      background:linear-gradient(135deg,#13202b,#24445d 52%,#2f6f72);
+      border-radius:8px;
+      padding:26px;
+      box-shadow:var(--shadow);
+    }
+    .monitor-link span{color:#cad6df;font-weight:850}
+    .monitor-link strong{font-size:32px;line-height:1.08}
+    .sentiment-card{
+      border-color:#bde5dd;
+      background:linear-gradient(180deg,#ffffff,#f0fbf8);
+    }
+    .timeline{display:grid;gap:14px}
+    .version{
+      display:grid;
+      grid-template-columns:160px 1fr;
+      gap:16px;
+      align-items:start;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:8px;
+      padding:18px;
+      box-shadow:var(--soft);
+      position:relative;
+    }
+    .version-name{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      font-weight:950;
+    }
+    .version-name span{
+      width:max-content;
+      border-radius:999px;
+      padding:5px 10px;
+      font-size:12px;
+      background:#eef4ff;
+      color:var(--blue);
+    }
+    .version.current{border-color:#a9dcd3;background:linear-gradient(180deg,#fff,#f2fbf9)}
+    .version.current .version-name span{background:#e5f7f3;color:#087a6f}
+    .version h3{margin:0;font-size:20px}
+    .version ul{margin:10px 0 0;padding-left:18px;color:var(--muted)}
+    .footer{padding:34px 0 56px;color:var(--muted);font-size:14px}
+    .reveal{opacity:1;transform:none;transition:transform .45s ease}
+    .reveal.visible{opacity:1;transform:none}
+    @media (max-width:900px){
+      .links{display:none}
+      .status-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .cols-2,.cols-3,.monitor{grid-template-columns:1fr}
+      .step{grid-template-columns:42px 1fr}
+      .tag{grid-column:2}
+      .version{grid-template-columns:1fr}
+    }
+    @media (max-width:720px){
+      .topbar{position:static}
+      .nav{min-height:58px}
+      h1,h2,.lead,.section-head p{max-width:calc(100vw - 34px)}
+      .hero{padding:34px 0 26px;gap:18px}
+      section{padding:34px 0}
+      .section-head{margin-bottom:16px}
+      .lead,.section-head p{font-size:15px}
+      .actions{display:grid;grid-template-columns:1fr;gap:10px;margin-top:20px}
+      .btn{width:100%;min-height:44px}
+      .table-wrap{overflow:visible;background:transparent;border:0;box-shadow:none}
+      table{min-width:0}
+      thead{display:none}
+      tbody{display:grid;gap:10px}
+      tr{display:block;background:#fff;border:1px solid var(--line);border-radius:8px;box-shadow:var(--soft);overflow:hidden}
+      td{display:grid;grid-template-columns:92px 1fr;gap:10px;align-items:start;padding:10px 12px;border-bottom:1px solid var(--line);font-size:14px}
+      td:last-child{border-bottom:0}
+      td:before{content:attr(data-label);color:var(--muted);font-weight:900;font-size:12px}
+      code{word-break:break-word}
+      .monitor-link{min-height:220px}
+      .version ul{padding-left:16px}
+    }
+    @media (max-width:560px){
+      .wrap,.nav{width:auto;margin-left:12px;margin-right:12px;padding-right:10px}
+      h1{font-size:clamp(28px,8vw,32px);line-height:1.1;margin:14px 0 12px}
+      .h1-line{display:block}
+      h2{font-size:clamp(22px,5.9vw,24px)}
+      h1,h2,.lead,.section-head p,.card h3,.card p,.step h3,.step p,.version h3,.version li,.monitor-link strong{word-break:break-all}
+      .kicker{font-size:12px;line-height:1.4;align-items:flex-start;border-radius:8px}
+      .dot{margin-top:5px;flex:0 0 8px}
+      .metric{padding:14px}
+      .metric span{font-size:11px;letter-spacing:.04em}
+      .metric strong{font-size:24px}
+      .card,.metric,.step,.version{padding:16px}
+      .card h3,.step h3{font-size:17px}
+      .card p,.step p,.version li{font-size:14px}
+      .monitor-link strong{font-size:26px}
+      .footer{padding-bottom:38px;font-size:13px}
+    }
+    @media (max-width:380px){
+      .status-grid{gap:9px}
+      .metric{padding:12px}
+      .metric strong{font-size:22px}
+      td{grid-template-columns:78px 1fr}
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <nav class="nav">
+      <div class="brand"><img class="brand-avatar" src="assets/bot-avatar.jpg" alt="SOLUSDT Bot avatar"><span>SOLUSDT Bot</span></div>
+      <div class="links">
+        <a href="#overview">概览</a>
+        <a href="#strategy">策略</a>
+        <a href="#ai">AI 逻辑</a>
+        <a href="#monitor">仪表盘</a>
+        <a href="#versions">版本</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="wrap hero reveal">
+      <div>
+        <div class="kicker"><span class="dot"></span>v8.3-sqlite 正在运行</div>
+        <h1><span class="h1-line">SOLUSDT</span> <span class="h1-line">自动交易程序</span><span class="h1-line">与策略说明</span></h1>
+        <p class="lead">当前实盘版本是 v8.3：保留 v8.2 的 5 分钟布林带回归、成交量/EMA/布林带宽度/RSI 背离过滤、MTF 多周期上下文和 DeepSeek 动态风控，并新增 SQLite 持久化存储。现在采用 JSON + SQLite 双写，默认仍读 JSON，等稳定后再切换 monitor 读取 SQLite。</p>
+        <div class="actions">
+          <a class="btn primary" href="#monitor">查看仪表盘</a>
+          <a class="btn" href="#strategy">查看策略</a>
+          <a class="btn" href="#versions">版本迭代</a>
+        </div>
+      </div>
+      <div class="status-grid">
+        <div class="metric"><span>当前版本</span><strong>v8.3</strong></div>
+        <div class="metric"><span>基础仓位</span><strong>48%</strong></div>
+        <div class="metric"><span>杠杆</span><strong>5x</strong></div>
+        <div class="metric"><span>AI 上限</span><strong>70%</strong></div>
+      </div>
+    </section>
+
+    <section id="overview" class="wrap reveal">
+      <div class="section-head">
+        <div class="eyebrow">Overview</div>
+        <h2>程序由交易服务、仪表盘和币安中继组成</h2>
+        <p>交易机器人负责实盘下单，仪表盘负责观察，Cloudflare Workers 只负责中继币安 API。DeepSeek 调用由服务器直连，不走 Cloudflare Workers。v8.3 在不破坏 JSON 数据格式的前提下增加 SQLite 双写，给后续历史查询、AI 质量统计和净值长期保存打底。</p>
+      </div>
+      <div class="grid cols-3">
+        <div class="card"><h3>交易服务</h3><p><code>solusdt-bot.service</code> 读取行情、计算信号、调用 DeepSeek、执行开平仓、主动还款，并可双写交易数据到 SQLite。</p></div>
+        <div class="card"><h3>仪表盘</h3><p><code>solusdt-monitor.service</code> 展示资产、持仓、交易记录、AI 说明、滑点统计、市场情绪、访问记录和 SQLite 聚合统计。</p></div>
+        <div class="card"><h3>币安 API 中继</h3><p>Cloudflare Workers 中继币安请求（需自行部署），不参与 DeepSeek 判断。</p></div>
+      </div>
+    </section>
+
+    <section id="strategy" class="wrap reveal">
+      <div class="section-head">
+        <div class="eyebrow">Strategy</div>
+        <h2>本地规则先找候选，AI 再决定是否交易</h2>
+        <p>本地策略只产生做多或做空候选信号，真正下单前交给 DeepSeek 做二次判断。这样能保留规则稳定性，也避免每 50 秒都无意义调用 AI。</p>
+      </div>
+      <div class="grid cols-2">
+        <div class="card">
+          <h3>做多候选</h3>
+          <ul>
+            <li><span class="check">✓</span>ATR 占价格比例至少 0.045%。</li>
+            <li><span class="check">✓</span>价格触及布林带下轨附近。</li>
+            <li><span class="check">✓</span>当前 K 线收阳。</li>
+            <li><span class="check">✓</span>RSI 上升且不高于 55。</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>做空候选</h3>
+          <ul>
+            <li><span class="check">✓</span>ATR 占价格比例至少 0.045%。</li>
+            <li><span class="check">✓</span>价格触及布林带上轨附近。</li>
+            <li><span class="check">✓</span>当前 K 线收阴。</li>
+            <li><span class="check">✓</span>RSI 下降且不低于 45。</li>
+          </ul>
+        </div>
+      </div>
+      <div class="table-wrap" style="margin-top:16px">
+        <table>
+          <thead><tr><th>参数</th><th>当前值</th><th>说明</th></tr></thead>
+          <tbody>
+            <tr><td data-label="参数">K 线周期</td><td data-label="当前值"><code>5m</code></td><td data-label="说明">短线回归判断周期。</td></tr>
+            <tr><td data-label="参数">轮询间隔</td><td data-label="当前值"><code>50s</code></td><td data-label="说明">服务端定时读取行情。</td></tr>
+            <tr><td data-label="参数">基础仓位</td><td data-label="当前值"><code>5x * 48%</code></td><td data-label="说明">目标名义仓位约为净值 2.4 倍。</td></tr>
+            <tr><td data-label="参数">AI 仓位范围</td><td data-label="当前值"><code>10% - 70%</code></td><td data-label="说明">DeepSeek 可降低或提高本轮仓位。</td></tr>
+            <tr><td data-label="参数">基础止盈/止损</td><td data-label="当前值"><code>1.5% / 1.0%</code></td><td data-label="说明">止盈更高，止损更紧，优先改善盈亏比。</td></tr>
+            <tr><td data-label="参数">信号质量过滤</td><td data-label="当前值"><code>VOL 1.5x + EMA + BB宽度</code></td><td data-label="说明">减少窄幅震荡里的假突破。</td></tr>
+            <tr><td data-label="参数">MTF 多周期</td><td data-label="当前值"><code>15m / 1h</code></td><td data-label="说明">默认传给 AI；本地过滤默认关闭，可渐进开启。</td></tr>
+            <tr><td data-label="参数">IOC 限价执行</td><td data-label="当前值"><code>默认关闭</code></td><td data-label="说明">开启后用限价单 + 1 秒撤单模拟 IOC，失败回退市价单。</td></tr>
+            <tr><td data-label="参数">滑点统计</td><td data-label="当前值"><code>avg / max</code></td><td data-label="说明">比较信号价和实际成交价。</td></tr>
+            <tr><td data-label="参数">SQLite 双写</td><td data-label="当前值"><code>默认关闭</code></td><td data-label="说明">开启后写入 <code>trades.db</code>，同时继续写 JSON 作为回滚备份。</td></tr>
+            <tr><td data-label="参数">SQLite 读取</td><td data-label="当前值"><code>默认关闭</code></td><td data-label="说明">monitor 可在稳定后从 SQLite 读取交易、持仓和净值历史。</td></tr>
+            <tr><td data-label="参数">手续费净 PnL</td><td data-label="当前值"><code>0.1% + 0.1%</code></td><td data-label="说明">交易记录优先显示估算净盈亏。</td></tr>
+            <tr><td data-label="参数">AI 动态止损</td><td data-label="当前值"><code>0.6% - 1.0%</code></td><td data-label="说明">AI 不能把本轮止损放宽到硬止损外。</td></tr>
+            <tr><td data-label="参数">硬最大亏损</td><td data-label="当前值"><code>1.0%</code></td><td data-label="说明">强制风控，不允许 AI 突破。</td></tr>
+            <tr><td data-label="参数">负收益超时</td><td data-label="当前值"><code>120min</code></td><td data-label="说明">超过 2 小时仍亏损就直接平仓。</td></tr>
+            <tr><td data-label="参数">AI 复评</td><td data-label="当前值"><code>30min</code></td><td data-label="说明">持仓卡住时主动让 AI 重新判断。</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="ai" class="wrap reveal">
+      <div class="section-head">
+        <div class="eyebrow">DeepSeek Layer</div>
+        <h2>v8.3 保留多周期上下文，并把历史数据沉到 SQLite</h2>
+        <p>AI 不主动扫描市场找机会。它只在本地出现候选、软性出场、30 分钟复评、动态阈值再次触达时介入；入场请求会附带 15 分钟和 1 小时趋势。亏到 1.0% 或 120 分钟仍为负收益时，本地代码直接退出。</p>
+      </div>
+      <div class="flow">
+        <div class="step"><div class="num">1</div><div><h3>本地生成候选</h3><p>布林带、RSI、ATR、K 线形态共同判断是否出现做多或做空候选。</p></div><div class="tag">local</div></div>
+        <div class="step"><div class="num">2</div><div><h3>DeepSeek 判断入场</h3><p>AI 返回 approve、skip、cap_use 和原因。仓位可在 10% 到 70% 之间动态调整。</p></div><div class="tag">entry AI</div></div>
+        <div class="step"><div class="num">3</div><div><h3>软性出场先问 AI</h3><p>达到基础止盈、基础止损、移动止盈或动能转弱时，程序询问 AI 是否继续持仓。</p></div><div class="tag">exit AI</div></div>
+        <div class="step"><div class="num">4</div><div><h3>30 分钟主动复评</h3><p>持仓半小时仍未达到触发条件时，AI 会重新判断是否继续持有、调整阈值、平仓或反手。</p></div><div class="tag">review</div></div>
+        <div class="step"><div class="num">5</div><div><h3>允许平仓后即刻反手</h3><p>AI 可返回 reverse_long 或 reverse_short。程序先平掉当前单，再尝试按反方向立即开仓。</p></div><div class="tag">reverse</div></div>
+      </div>
+      <div class="grid cols-3" style="margin-top:16px">
+        <div class="card"><h3>不会增加 CF 用量</h3><p>DeepSeek 由服务器直连 API，不经过 Cloudflare Workers 中继。</p></div>
+        <div class="card"><h3>不会突破硬风控</h3><p>单笔 1.0% 硬止损、120 分钟负收益强平、保证金率底线和日亏损限制仍由本地代码强制执行。</p></div>
+        <div class="card"><h3>会增加 AI 参考信息</h3><p>MTF 趋势会放进 AI 入场/出场上下文；30 分钟复评和市场情绪仍受条件限制。</p></div>
+      </div>
+    </section>
+
+    <section id="monitor" class="wrap reveal">
+      <div class="section-head">
+        <div class="eyebrow">Monitor</div>
+        <h2>仪表盘负责观察实盘，不负责直接下判断</h2>
+        <p>交易记录默认展开当前持仓的 AI 说明。没有当前持仓时，默认展开最新一笔完成交易。v8.3 在保留滑点卡片和独立 HTML 的基础上，新增 SQLite 交易统计与 AI 决策质量面板。</p>
+      </div>
+      <div class="monitor">
+        <a class="monitor-link" href="#monitor">
+          <span>Monitor URL</span>
+          <strong>本地运行后打开交易仪表盘</strong>
+          <span>http://localhost:8888/</span>
+        </a>
+        <div class="grid cols-2">
+          <div class="card"><h3>交易记录</h3><p>一笔完成交易只显示一行，点击后展开入场和出场 AI 说明。</p></div>
+          <div class="card"><h3>移动端适配</h3><p>标题在手机端分行显示，交易记录和图表按屏幕宽度排版。</p></div>
+          <div class="card sentiment-card"><h3>市场情绪</h3><p>每小时 UTC+8 整点刷新一次，由 DeepSeek 用通俗语言分析 SOLUSDT 前景。</p></div>
+          <div class="card"><h3>滑点统计</h3><p>顶部卡片显示信号价与实际成交价的平均和最大滑点，用来观察成交质量。</p></div>
+          <div class="card"><h3>SQLite 统计</h3><p>开启后展示总交易、胜率、盈亏比、净 PnL、平均持仓时间和 AI approve 胜率。</p></div>
+          <div class="card"><h3>管理员记录</h3><p>管理员页面聚合访问记录，按设备展示最新访问时间、城市、IP 和系统浏览器。</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="versions" class="wrap reveal">
+      <div class="section-head">
+        <div class="eyebrow">Changelog</div>
+        <h2>版本迭代，从新到旧</h2>
+        <p>下面从当前 v8.3 往回展示到 v6，便于对比每次策略变化。</p>
+      </div>
+      <div class="timeline">
+        <article class="version current">
+          <div class="version-name"><span>当前版本</span><h3>v8.3-sqlite</h3></div>
+          <div>
+            <ul>
+              <li>新增 <code>storage.py</code>，使用标准库 SQLite 建立 <code>trades.db</code>。</li>
+              <li>支持交易、持仓快照、净值快照、AI 决策和风控状态的 SQLite 持久化。</li>
+              <li>采用 JSON + SQLite 双写，默认仍读 JSON，方便稳定后渐进切换。</li>
+              <li>monitor 新增交易统计和 AI 决策质量面板。</li>
+              <li>新增 <code>migrate_json_to_sqlite.py</code>，可把旧 JSON 数据迁入 SQLite。</li>
+            </ul>
+          </div>
+        </article>
+        <article class="version">
+          <div class="version-name"><span>多周期执行</span><h3>v8.2-mtf-exec</h3></div>
+          <div>
+            <ul>
+              <li>新增 5m / 15m / 1h 多周期 K 线读取和 MTF 趋势判断。</li>
+              <li>MTF 信息默认传给 DeepSeek；本地 MTF 过滤默认关闭，可渐进开启。</li>
+              <li>新增可选 IOC 限价执行，失败自动回退市价单。</li>
+              <li>新增滑点统计，仪表盘展示 avg/max。</li>
+              <li>monitor 拆分为 Handler、数据抓取和独立 HTML。</li>
+              <li>回测引擎新增 MTF 模拟路径。</li>
+            </ul>
+          </div>
+        </article>
+        <article class="version">
+          <div class="version-name"><span>质量门槛</span><h3>v8.1-quality-gate</h3></div>
+          <div>
+            <ul>
+              <li>新增成交量、EMA 趋势、布林带宽度和 RSI 背离过滤。</li>
+              <li>基础止盈调整为 1.5%，基础止损压到 1.0%。</li>
+              <li>交易记录按估算手续费后的净 PnL 记录。</li>
+              <li>DeepSeek 增加重试、缓存降级、响应时间日志和质量统计。</li>
+              <li>新增 BacktestEngine 和基础测试。</li>
+            </ul>
+          </div>
+        </article>
+        <article class="version">
+          <div class="version-name"><span>硬退出</span><h3>v8-hard-exit</h3></div>
+          <div>
+            <ul>
+              <li>单笔浮亏达到 1.0% 时直接平仓，不再交给 AI 继续持仓。</li>
+              <li>持仓超过 120 分钟且仍为负收益时直接平仓。</li>
+              <li>AI 动态止损上限压到 1.0%，避免亏损单被长期拖住。</li>
+              <li>保留 30 分钟复评、动态止盈止损和 AI 反手能力。</li>
+            </ul>
+          </div>
+        </article>
+        <article class="version">
+          <div class="version-name"><span>复评反手</span><h3>v8-ai-review-reverse-sentiment</h3></div>
+          <div>
+            <ul>
+              <li>持仓超过 30 分钟但未触发 AI 条件时，主动调用 DeepSeek 复评。</li>
+              <li>AI 继续持仓后，30 分钟仍未触发新条件会再次复评。</li>
+              <li>出场 AI 支持平仓后立即反向开单。</li>
+              <li>monitor 新增每小时市场情绪，手机端标题换行，修复平仓取整缺陷。</li>
+            </ul>
+          </div>
+        </article>
+        <article class="version">
+          <div class="version-name"><span>AI 出场</span><h3>v7.3-ai-dynamic-exit</h3></div>
+          <div>
+            <ul>
+              <li>每次软性卖出条件触发时询问 DeepSeek。</li>
+              <li>AI 可选择继续持仓并设置下一轮动态止盈/止损。</li>
+              <li>交易记录展示 AI 入场和出场说明。</li>
+            </ul>
+          </div>
+        </article>
+        <article class="version">
+          <div class="version-name"><span>AI 入场</span><h3>v7.2-cap48-deepseek</h3></div>
+          <div>
+            <ul>
+              <li>基础仓位从 95% 降为 48%。</li>
+              <li>加入 DeepSeek 入场二次风控。</li>
+              <li>AI 可放行、跳过或调整入场仓位。</li>
+            </ul>
+          </div>
+        </article>
+        <article class="version">
+          <div class="version-name"><span>降仓</span><h3>v7.1-cap48</h3></div>
+          <div>
+            <ul>
+              <li>保持 5x 杠杆不变。</li>
+              <li>将资金使用率改为 48%。</li>
+              <li>降低做空借币和保证金率压力。</li>
+            </ul>
+          </div>
+        </article>
+        <article class="version">
+          <div class="version-name"><span>激进仓位</span><h3>v7.0-bb95</h3></div>
+          <div>
+            <ul>
+              <li>使用 5x * 95% 的激进仓位。</li>
+              <li>回测波动更大，实盘保证金率压力过高。</li>
+              <li>暴露出小资金高仓位不稳定的问题。</li>
+            </ul>
+          </div>
+        </article>
+        <article class="version">
+          <div class="version-name"><span>早期规则</span><h3>v6-local-aggressive</h3></div>
+          <div>
+            <ul>
+              <li>早期本地规则激进版本。</li>
+              <li>主要依赖 5 分钟技术指标和固定止盈止损。</li>
+              <li>没有现在的 AI 动态出场、30 分钟复评、反手和市场情绪模块。</li>
+            </ul>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wrap footer">
+    当前说明对应服务器实盘版本 <code>v8.3-sqlite</code>。策略仍偏激进，但已保留多周期上下文、可选 IOC 执行、滑点统计和 monitor 拆分，并新增 SQLite 双写；优先观察保证金率、AI 判断质量、手续费磨损、滑点、数据持久化状态和反手开单后的回撤。
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+      });
+    }, {threshold: 0.12});
+    document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+  </script>
+</body>
+</html>

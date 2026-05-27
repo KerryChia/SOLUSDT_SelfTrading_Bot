@@ -5,6 +5,12 @@ config.json
 history.json
 trades.json
 position.json
+risk_state.json
+ai_stats.json
+ai_stats.jsonl
+market_sentiment.json
+access_log.jsonl
+trades.db
 *.log
 
 # Python
